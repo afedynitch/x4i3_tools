@@ -1,3 +1,6 @@
+x4i3_*
+.vscode
+EXFOR-*
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -127,3 +130,4 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+x4i3_EXFOR-2016-04-01/db/100/10001.x4
