@@ -48,7 +48,7 @@ from distutils.core import setup
 
 setup(
     name='x4i3_tools',
-    version='0.1.0',
+    version='0.2.0',
     author='David A. Brown (x4i3: Anatoli Fedynitch)',
     author_email='dbrown@bnl.gov',
     maintainer='Anatoli Fedynitch',
@@ -63,13 +63,13 @@ setup(
     long_description=open('README.md').read(),
     classifiers=[
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
         'Topic :: Scientific/Engineering :: Physics',
         'Intended Audience :: Science/Research',
         'Development Status :: 2 - Pre-Alpha',
