@@ -1,4 +1,3 @@
-
 # def unpackX4C4Master(newZipFile, verbose):
 #     '''Unpack an x4c4 master file'''
 #     import shutil
@@ -32,12 +31,12 @@
 #     # rename db (always comes out called "X4all")
 #     # if verbose:
 #     #     "Renaming " + DATAPATH + os.sep + 'X4all' + " to " + fullDBPath
-    # shutil.move(DATAPATH + os.sep + 'X4all', currentDBPath)
+# shutil.move(DATAPATH + os.sep + 'X4all', currentDBPath)
 
-    # # make a symlink to the zipfile so everyone knows what the current one is
-    # if os.path.exists(fullDBZipFileName):
-    #     os.remove(fullDBZipFileName)
-    # os.symlink(DATAPATH + os.sep + newZipFile, fullDBZipFileName)
+# # make a symlink to the zipfile so everyone knows what the current one is
+# if os.path.exists(fullDBZipFileName):
+#     os.remove(fullDBZipFileName)
+# os.symlink(DATAPATH + os.sep + newZipFile, fullDBZipFileName)
 
 
 # ------------------------------------------------------
@@ -51,6 +50,7 @@
 # ------------------------------------------------------
 #  Tools to manage the dictionaries
 # ------------------------------------------------------
+
 
 def buildDictionaryIndex(dictionaryFile, verbose, force):
     raise NotImplementedError()
