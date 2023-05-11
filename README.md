@@ -22,11 +22,17 @@ The main tool is `setup_exfor_db.py`. Run
 
     python setup_exfor_db.py --help
 
-to get an idea of the purpose. A typical use case is the conversion of an EXFOR master zip-file into the tables and index files required to run `x4i3` through
+to get an idea of the purpose. A typical use case is the conversion of an EXFOR master zip-file (named like X4-XXXX...) into the tables and index files required to run `x4i3` through
 
     python setup_exfor_db.py --X4-master <name_of_the_zipped_EXFOR_master>
 
+or, if the zip file is called EXFOR-20XX-XX-XX.zip, then a different option is required:
+    
+    python setup_exfor_db.py --exfor-master <name_of_the_zipped_EXFOR_master>
+
 It will create a directory named after the EXFOR master file, the sqlite tables and several pickled files. The content of this directory is distributed as tar.gz with `x4i3`. The latest update makes this process fast if you have multiple threads. By default 75% of threads are used or provided via `-ncpu` argument.
+
+The `x4i3` package looks for its default database first. If you want to use a different location, such as that of the the newly imported master file, you can set the environment variable `X43I_DATAPATH` to the newly processed database, e.g. `x4i3_EXFOR-20XX-XX-XX`. The `x4i3` package will then use this database instead of the default one. In this way one can also maintain different versions of the database.
 
 ## Documentation
 

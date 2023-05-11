@@ -20,16 +20,14 @@ def processEntry(entryFileName, sqlTransactions, coupledReactionEntries,
     '''
     Computes the rows for a single entry and puts it in the database
     '''
-    import os
     import x4i3tools as x4t
-    import x4i3
     from x4i3 import exfor_entry, exfor_reactions
 
     if x4t.verbose:
-        print('        ', os.path.split(entryFileName)[1], end=' ')
+        print('        ', entryFileName.name, end=' ')
     
     this_entry = exfor_entry.x4EntryFactory(
-        entryFileName.split(os.sep)[-1].split('.')[0],
+        entryFileName.stem,
         customDBPath=dbPath
     )
     

@@ -132,4 +132,7 @@ dmypy.json
 # Pyre type checker
 .pyre/
 x4i3_EXFOR-*
+EXFOR-20*
 *.zip
+EXFOR_master_dictionary.txt
+unpack_*

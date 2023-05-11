@@ -54,25 +54,25 @@ def report_errors(outFile):
     import csv
 
     if x4i3tools.verbose:
-        print('Error file name:', x4i3tools.currentErrorFileName)
-    f = pickle.load(open(x4i3tools.currentErrorFileName, mode='rb'))
+        print("Error file name:", x4i3tools.currentErrorFileName)
+    f = pickle.load(open(x4i3tools.currentErrorFileName, mode="rb"))
 
     sortedErrors = {}
     for i in f:
         t = type(f[i][0])
-        if not t in sortedErrors:
+        if t not in sortedErrors:
             sortedErrors[t] = []
         sortedErrors[t].append(i)
 
     # Full report to a csv file
     if x4i3tools.verbose:
-        print('Writing report to:', outFile)
-    fullReport = csv.writer(open(outFile, mode='wb'))
+        print("Writing report to:", outFile)
+    fullReport = csv.writer(open(outFile, mode="w"))
     fullReport.writerow(["Error", "Number Occurances", "Entry", "Full Message"])
     for i in sortedErrors:
         for j in range(len(sortedErrors[i])):
             example = f[sortedErrors[i][j]][1]
-            entry = sortedErrors[i][j].replace('.x4', '')
+            entry = sortedErrors[i][j].replace(".x4", "")
             if j == 0:
                 row = [repr(i), str(len(sortedErrors[i])), entry, example]
             else:
@@ -81,12 +81,12 @@ def report_errors(outFile):
 
 
 def view_errors():
-    f = pickle.load(open(x4i3tools.currentErrorFileName, mode='rb'))
+    f = pickle.load(open(x4i3tools.currentErrorFileName, mode="rb"))
 
     sortedErrors = {}
     for i in f:
         t = type(f[i][0])
-        if not t in sortedErrors:
+        if t not in sortedErrors:
             sortedErrors[t] = []
         sortedErrors[t].append(i)
 
@@ -96,80 +96,136 @@ def view_errors():
         for j in range(len(sortedErrors[i])):
             example = f[sortedErrors[i][j]][1]
             if len(example) > 70:
-                example = example[0:70] + '...'
+                example = example[0:70] + "..."
             example = example.ljust(74)
-            entry = sortedErrors[i][j].replace('.x4', '')
+            entry = sortedErrors[i][j].replace(".x4", "")
             if j == 0:
-                print(repr(i).rjust(55), " ", str(
-                    len(sortedErrors[i])).ljust(4), " ", example, " ", entry)
+                print(
+                    repr(i).rjust(55),
+                    " ",
+                    str(len(sortedErrors[i])).ljust(4),
+                    " ",
+                    example,
+                    " ",
+                    entry,
+                )
             else:
                 print(55 * " ", " ", 4 * " ", " ", example, " ", entry)
 
 
-if __name__ == "__main__":
+def make_tarfile(output_filename, source_dir):
+    import tarfile
 
+    with tarfile.open(output_filename, "w:gz") as tar:
+        for root, dirs, files in os.walk(source_dir):
+            for file in files:
+                full_path = os.path.join(root, file)
+                relative_path = os.path.relpath(full_path, source_dir)
+                tar.add(full_path, arcname=relative_path)
+
+
+if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Manage the installation & update of x4i's internal copy of the EXFOR database.")
+        description="Manage the installation & update of x4i's internal copy "
+        + "of the EXFOR database."
+    )
     parser.add_argument(
-        "-v",
-        action="store_true",
-        dest='verbose',
-        help="Enable verbose output")
+        "-v", action="store_true", dest="verbose", help="Enable verbose output"
+    )
     parser.add_argument(
         "-f",
         action="store_true",
-        dest='force',
-        help="Force overwriting working directories")
+        dest="force",
+        help="Force overwriting working directories",
+    )
     parser.add_argument(
         "-ncpu",
         type=int,
         default=-1,
-        dest='ncpu',
-        help="Set number of threads in multiprocessing. Default is number of threads.")
+        dest="ncpu",
+        help="Set number of threads in multiprocessing. Default is number of threads.",
+    )
 
     # ------- Control over update actions -------
     parser.add_argument(
         "--just-build-index",
         action="store_true",
         default=False,
-        help="Just (re)builds the sqlite database indexing the EXFOR data in the project. The EXFOR data must be already unpacked.")
+        help="Just (re)builds the sqlite database indexing the EXFOR data "
+        + "in the project. The EXFOR data must be already unpacked.",
+    )
     parser.add_argument(
         "--just-unpack",
         action="store_true",
         default=False,
-        help="Just unpack the EXFOR data, then stop. Do not (re)build the sqlite database index.")
+        help="Just unpack the EXFOR data, then stop. Do not (re)build the "
+        + "sqlite database index.",
+    )
 
     # ------- View/save logs -------
     parser.add_argument(
         "--view-errors",
         action="store_true",
         default=False,
-        help="View all errors encountered while building the database index.")
+        help="View all errors encountered while building the database index.",
+    )
     parser.add_argument(
-        '--error-log',
+        "--error-log",
         metavar="CSVFILE",
         type=str,
         default=None,
-        help="Write all the errors encountered when generating the index of the EXFOR files to this file.  This is a csv formatted file suitable for viewing in MS Excel.")
+        help="Write all the errors encountered when generating the index "
+        + "of the EXFOR files to this file.  This is a csv formatted file "
+        + "suitable for viewing in MS Excel.",
+    )
     # parser.add_argument('--coupled-log', metavar="CSVFILE", type=str, default=None,
     # help="Write all the coupled data encountered when generating the index
     # of the EXFOR files to this file.  This is a csv formatted file suitable
     # for viewing in MS Excel.")
 
-    parser.add_argument("--exfor-master", metavar='ZIPFILE', type=str, default=None,
-                        help="""Install the (hopefully) IAEA generated EXFOR Master File [a zipfile] into the project,
-            unpack the zipfile, then build the index.
-            The file is available here:  http://www-nds.iaea.org/exfor-master/backup/?C=M;O=D""")
+    parser.add_argument(
+        "--exfor-master",
+        metavar="ZIPFILE",
+        type=str,
+        default=None,
+        help="""Install the (hopefully) IAEA generated EXFOR Master File [a zipfile]
+        into the project, unpack the zipfile, then build the index.
+        The file is available here:
+            http://www-nds.iaea.org/exfor-master/backup/?C=M;O=D""",
+    )
 
-    parser.add_argument("--X4-master", metavar='ZIPFILE', type=str, default=None,
-                        help="""Install the IAEA generated X4 Master File [a zipfile] into the project, unpack the zipfile, then build the index. This is the newer X4-xxx format files, rather than the original EXFOR-20xx-...zip files.
-            The file is available here:  http://www-nds.iaea.org/exfor-master/backup/?C=M;O=D""")
+    parser.add_argument(
+        "--X4-master",
+        metavar="ZIPFILE",
+        type=str,
+        default=None,
+        help="""Install the IAEA generated X4 Master File [a zipfile] into the
+        project, unpack the zipfile, then build the index. This is the newer X4-xxx
+        format files, rather than the original EXFOR-20xx-...zip files. The file
+        is available here:
+            http://www-nds.iaea.org/exfor-master/backup/?C=M;O=D""",
+    )
 
     # ------- Update the EXFOR dicts. -------
-    parser.add_argument("--dict", type=str, default=None,
-                        help='Reinstall the EXFOR dictionaries using the contents from this IAEA EXFOR dictionary Transaction file.')
-    parser.add_argument("--doi", type=str, default=None,
-                        help='Reinstall the EXFOR doi <-> entry mapping using the contents from this IAEA EXFOR dictionary text file.')
+    parser.add_argument(
+        "--dict",
+        type=str,
+        default=None,
+        help="Reinstall the EXFOR dictionaries using the contents from this "
+        + "IAEA EXFOR dictionary Transaction file.",
+    )
+    parser.add_argument(
+        "--doi",
+        type=str,
+        default=None,
+        help="Reinstall the EXFOR doi <-> entry mapping using the contents "
+        + "from this IAEA EXFOR dictionary text file.",
+    )
+    parser.add_argument(
+        "--create-x4i3-tarfile",
+        action="store_true",
+        help="Compile a tar.gz file suitable for x4i3.",
+    )
 
     args = parser.parse_args()
 
@@ -181,25 +237,41 @@ if __name__ == "__main__":
     # Number of cores
     x4i3tools.nthreads = args.ncpu if args.ncpu > 0 else x4i3tools.nthreads
 
-    assert args.exfor_master is not None or args.X4_master is not None, 'Chose either EXFOR or X4 format'
+    assert (
+        args.exfor_master is not None or args.X4_master is not None
+    ), "Chose either EXFOR or X4 format"
 
     if args.exfor_master is not None:
         from x4i3tools.fileops import unpackEXFORMaster as unpack_func
+
         x4_db_fname = args.exfor_master
-        dbdir = 'db'
+        dbdir = "db"
     else:
         from x4i3tools.fileops import unpackX4Master as unpack_func
+
         x4_db_fname = args.X4_master
-        dbdir = 'X4all'
+        dbdir = "X4all"
 
     # Set paths for all operations
-    current_path = x4i3tools.set_current_dir(x4_db_fname, create=False)
-    x4i3tools.currentDBPath = os.path.join(current_path, dbdir)
+    current_path, x4i3_db_dir = x4i3tools.set_current_dir(x4_db_fname, create=False)
+    # x4i3tools.currentDBPath = os.path.join(current_path, dbdir)
 
-    if not (args.just_build_index or args.doi or args.error_log or args.view_errors):
+    if not (
+        args.just_build_index
+        or args.doi
+        or args.error_log
+        or args.view_errors
+        or args.create_x4i3_tarfile
+    ):
         unpack_func(x4_db_fname)
 
-    if not (args.just_unpack or args.doi or args.error_log or args.view_errors):
+    if not (
+        args.just_unpack
+        or args.doi
+        or args.error_log
+        or args.view_errors
+        or args.create_x4i3_tarfile
+    ):
         from x4i3tools.index_generators import buildMainIndex, insertDOIIndex
 
         buildMainIndex()
@@ -207,10 +279,14 @@ if __name__ == "__main__":
 
     if args.doi:
         from x4i3tools.index_generators import insertDOIIndex
+
         insertDOIIndex()
 
     if args.view_errors:
         view_errors()
 
     if args.error_log:
-        report_errors(current_path + '.csv')
+        report_errors(str(current_path) + ".csv")
+
+    if args.create_x4i3_tarfile:
+        make_tarfile("x4i3_" + x4i3_db_dir.name + ".tar.gz", x4i3_db_dir)
